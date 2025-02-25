@@ -10,8 +10,14 @@ int StateClimate::getYear() const { return year; }
 double StateClimate::getTemp() const { return temp; }
 double StateClimate::getTempC() const { return tempc; }
 
+// Setters
+void StateClimate::setFips(int f) { fips = f; }
+void StateClimate::setYear(int y) { year = y; }
+void StateClimate::setTemp(int t) { temp = t; }
+void StateClimate::setTempC(int tc) { tempc = tc; }
+
 // Display function
 void StateClimate::display() const {
-    std::cout << "FIPS: " << fips << ", Year: " << year 
+    std::cout << "Fips: " << fips << ", Year: " << year 
               << ", Temp (F): " << temp << ", Temp (C): " << tempc << std::endl;
 }
