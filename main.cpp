@@ -3,7 +3,6 @@
 #include <fstream>
 #include <vector>
 #include <sstream>
-//#include "StateClimate.h"
 
 class StateClimate {
     private:
@@ -52,44 +51,53 @@ void StateClimate::display() const {
     std::cout << "FIPS: " << fips << ", Year: " << year << ", Temp (F): " << temp << ", Temp (C): " << tempc << std::endl;
 }
 
-// Binary Search function
-int binarySearch(const std:vector<StateClimate> &data, int keyFips) {
+// Binary Search function (fixed)
+int binarySearch(const std::vector<StateClimate> &data, int keyFips) {
     int left = 0;
     int right = data.size() - 1;
     int mid;
+    int result = -1;
 
     while (left <= right) {
         mid = left + (right - left) / 2;
         if (data[mid].getFips() == keyFips) {
-            return mid; // found an instance of keyFips
+            result = mid;
+            right = mid - 1; // Keep searching for the first occurrence
         } else if (data[mid].getFips() < keyFips) {
-            left = mid + 1; // keyFips not found, search right
+            left = mid + 1;
         } else {
-            right = mid - 1; // keyFips not found, search left
+            right = mid - 1;
         }
-        return -1;
     }
 
-    // search for the first instance of keyFips
-    int index = binarySearch();
-    while (vector.at(index).getFips() == keyFips) {
+    return result; // Returns the first occurrence index or -1 if not found
+}
+
+// Function to display all entries with matching FIPS
+void displayFipsEntries(const std::vector<StateClimate> &data, int keyFips) {
+    int index = binarySearch(data, keyFips);
+    
+    if (index == -1) {
+        std::cout << "FIPS code not found." << std::endl;
+        return;
+    }
+
+    // Find the first occurrence of keyFips
+    while (index > 0 && data[index - 1].getFips() == keyFips) {
         index--;
     }
-    if (index != 0) { 
+
+    // Print all occurrences
+    while (index < data.size() && data[index].getFips() == keyFips) {
+        data[index].display();
         index++;
-    }
-    while (vector.at(index).getFips() == keyFips) {
-        display.vector.at(index);
-        index++;
-        if (index == vector.size()) {
-            break;
-        }
     }
 }
 
 int main() {
     std::vector<StateClimate> climateData;
     std::ifstream file("climdiv_state_year.csv");
+    
     if (!file) {
         std::cerr << "Error opening file!" << std::endl;
         return 1;
@@ -103,16 +111,21 @@ int main() {
         double temp, tempc;
         char comma;
 
-        ss >> fips >> comma >> year >> comma >> temp >> comma >> tempc;
+        // Read line safely
+        if (!(ss >> fips >> comma >> year >> comma >> temp >> comma >> tempc)) {
+            continue; // Skip malformed lines
+        }
+
         climateData.emplace_back(fips, year, temp, tempc);
     }
 
     file.close();
 
-    // Display data
-    // for (const auto &entry : climateData) {
-    //    entry.display();
-    //}
+    // Example: Search for a FIPS code
+    int searchFips;
+    std::cout << "Enter a FIPS number to search: ";
+    std::cin >> searchFips;
+    displayFipsEntries(climateData, searchFips);
 
     return 0;
 }
