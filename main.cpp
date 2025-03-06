@@ -4,6 +4,7 @@
 #include <vector>
 #include <sstream>
 
+// StateClimate.h
 class StateClimate {
     private:
         int fips;
@@ -31,6 +32,7 @@ class StateClimate {
         void display() const;
 };
 
+// StateClimate.cpp
 StateClimate::StateClimate(int f, int y, double t, double tc) : fips(f), year(y),
 temp(t), tempc(tc) {}
 
@@ -76,7 +78,8 @@ int binarySearch(const std::vector<StateClimate> &data, int keyFips) {
 // Function to display all entries with matching FIPS
 void displayFipsEntries(const std::vector<StateClimate> &data, int keyFips) {
     int index = binarySearch(data, keyFips);
-    
+
+    // Display error message if FIPS code is not found
     if (index == -1) {
         std::cout << "FIPS code not found." << std::endl;
         return;
@@ -111,17 +114,13 @@ int main() {
         double temp, tempc;
         char comma;
 
-        // Read line safely
-        if (!(ss >> fips >> comma >> year >> comma >> temp >> comma >> tempc)) {
-            continue; // Skip malformed lines
-        }
-
+        ss >> fips >> comma >> year >> comma >> temp >> comma >> tempc;
         climateData.emplace_back(fips, year, temp, tempc);
     }
 
     file.close();
 
-    // Example: Search for a FIPS code
+    // Allow user to search for a FIPS code
     int searchFips;
     std::cout << "Enter a FIPS number to search: ";
     std::cin >> searchFips;
